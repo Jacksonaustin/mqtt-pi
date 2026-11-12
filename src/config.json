@@ -1,3 +1,27 @@
 {
 	"broker":{
-		"host":
+		"host": "localhost",
+		"port": 1883,
+		"username": "",
+		"password": ""
+	},
+	"node": "pi-jackson",
+	"sections": ["melody", "harmony", "rhythm"],
+	"section": "melody",
+	"conductor": "conductor-1",
+	"gpio": {
+		"led": 17,
+		"buzzer":18
+	},
+
+	"topics":{
+		"all_control": "orchestra/all/control",
+		"section_score": "orchestra/section/{section}/score",
+		"section_control": "orchestra/section/{section}/control",
+		"node_control": "orchestra/node/{node}/control",
+		"status": "orchestra/status/{node}"
+	}
+}
+
+
+
