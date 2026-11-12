@@ -13,7 +13,11 @@ def main():
                                             "malformed", "unauthorized"])
     parser.add_argument("--scope", choices=["all", "section", "node"], default="node")
     parser.add_argument("--performance", default="demo-001")
+    parser.add_argument("--score-file", type=Path,
+                        help="JSON score data containing tempo and notes")
     args = parser.parse_args()
+    if args.score_file and args.action != "score":
+        parser.error("--score-file can only be used with the score action")
     config = json.loads((BASE / "config.json").read_text())
     topics = {key: value.format(**config) for key, value in config["topics"].items()}
     broker = config["broker"]
@@ -35,6 +39,11 @@ def main():
                 "notes": [{"frequency": frequency, "beats": 1}
                           for frequency in [262, 294, 330, 0, 349, 392]],
             }
+            if args.score_file:
+                try:
+                    payload["data"] = json.loads(args.score_file.read_text())
+                except (OSError, ValueError) as error:
+                    parser.error(f"Cannot read score: {error}")
         if args.action == "unauthorized":
             payload.update(type="START", sender="unauthorized-node")
         body = "{broken" if args.action == "malformed" else json.dumps(payload)
