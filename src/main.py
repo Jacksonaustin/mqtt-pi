@@ -15,9 +15,11 @@ log = logging.getLogger("mqtt-pi")
 
 def number(value, minimum, maximum, name):
     """Reject booleans, non-finite numbers, and values outside safe limits."""
-    if (type(value) not in (int, float)
-            or not math.isfinite(value)
-            or not minimum <= value <= maximum):
+    if (
+        type(value) not in (int, float)
+        or not math.isfinite(value)
+        or not minimum <= value <= maximum
+    ):
         raise ValueError(f"Invalid {name}: expected {minimum}–{maximum}")
     return value
 
@@ -50,10 +52,15 @@ class OrchestraNode:
         self.worker = None
         self.cancel = threading.Event()
         self.led = LED(config["gpio"]["led"])
-        self.buzzer = PWMOutputDevice(config["gpio"]["buzzer"], frequency=440,
-                                      initial_value=0)
-        self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2,
-                                  client_id=config["node"])
+        self.buzzer = PWMOutputDevice(
+            config["gpio"]["buzzer"],
+            frequency=440,
+            initial_value=0,
+        )
+        self.client = mqtt.Client(
+            mqtt.CallbackAPIVersion.VERSION2,
+            client_id=config["node"],
+        )
         broker = config["broker"]
         if broker.get("username"):
             self.client.username_pw_set(broker["username"], broker.get("password"))
